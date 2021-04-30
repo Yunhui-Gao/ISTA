@@ -42,7 +42,7 @@ for i = 1:length(lambda)
         'tol',1e-10);
 end
 
-%% display result
+%% display results
 colors = ['r';'g';'b';'m';'c'];
 figure
 h1 = semilogx(lambda,x_est(1,:),'-s','linewidth',1.5,'color',colors(1),'markerfacecolor',colors(1)); hold on

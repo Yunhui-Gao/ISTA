@@ -1,15 +1,12 @@
 function prox = proxTVi(x,gamma,iter)
 % *************************************************************************
-% * This function applies the fast iterative shrinkage / thresholding 
-%   algorithm (FISTA) to solve linear inverse problem of the form: 
+% * This function applies the fast projected gradient (FPG) algorithm to
+%   the following denoising problem: 
 %
-%           min {J(x) = F(x) + R(x)},
-%            x
+%           min { || y ||_TVi + 1 / (2*gamma) *  || y - x ||_2^2 },
+%            y
 %   
-%   where   F(x) = 0.5*|| A x - y ||_2^2    is the data-fidelity term,
-%   and     R(x) = lambda * r(x)            is the regularization term.
-%
-%   See the Readme.md file for details.
+%   where   || y ||_TVi stands for the isotropic TV norm of y.
 % 
 % * References:
 %   [1] A. Beck and M. Teboulle, "Fast Gradient-Based Algorithms for 
@@ -21,7 +18,25 @@ function prox = proxTVi(x,gamma,iter)
 % * Author : Yunhui Gao
 % * Date   : 2021/04/20
 % *************************************************************************
-
+%
+%   ===== Required inputs =================================================
+%
+%	- x     : 1D / 2D / 3D array
+%             The input array.
+%
+%   - gamma : float
+%             Parameter for the proximity operator.
+%
+%   - iter  : int
+%             Number of iterations for solving the denoising problem.
+%
+%   ===== Outputs =========================================================
+%
+%   - prox : 1D / 2D / 3D array
+%            The proximity operator for x with respect to the isotropic
+%            TV norm.
+%
+% *************************************************************************
 
 t_prev = 1;
 

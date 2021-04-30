@@ -102,7 +102,7 @@ lambda = 2e-5;
     'min_iter',     n_iters,...
     'verbose',      true);
 
-% display the results
+%% display the results
 figure
 subplot(1,3,1),imshow(x_ista,[])
 title(['ISTA ($J(\mathbf{x}) = $',num2str(J_ista(201),'%4.3f'),')'],'interpreter','latex','fontsize',14)

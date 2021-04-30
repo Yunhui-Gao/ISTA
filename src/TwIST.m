@@ -1,5 +1,4 @@
 function [x,n_iters,J_vals,runtimes] = TwIST(y,A,lambda,varargin)
-
 % *************************************************************************
 % * This function applies the two-Step iterative shrinkage / thresholding 
 %   algorithm (TwIST) to solve linear inverse problem of the form: 
@@ -254,7 +253,10 @@ if beta == 0
     beta  = alpha*2/(eig_min+eig_max);
 end
 
-%% auxilary functions
+%% 
+% =========================================================================
+%                         auxilary functions
+% =========================================================================
 % calculate the data-fidelity term F(x)
 function val = F(x)
     val = 0.5*normArr(A(x)-y)^2;
@@ -285,8 +287,10 @@ function val = dF(x)
     val = AT(A(x) - y);
 end
 
-%% main loop
-
+%% 
+% =========================================================================
+%                               main loop
+% =========================================================================
 % initialization
 runtimes = NaN(max_iter,1);
 J_vals = NaN(max_iter,1);

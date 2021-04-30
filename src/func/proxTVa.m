@@ -1,4 +1,42 @@
 function prox = proxTVa(x,gamma,iter)
+% *************************************************************************
+% * This function applies the fast projected gradient (FPG) algorithm to
+%   the following denoising problem: 
+%
+%           min { || y ||_TVa + 1 / (2*gamma) *  || y - x ||_2^2 },
+%            y
+%   
+%   where   || y ||_TVa stands for the anisotropic TV norm of y.
+% 
+% * References:
+%   [1] A. Beck and M. Teboulle, "Fast Gradient-Based Algorithms for 
+%       Constrained Total Variation Image Denoising and Deblurring 
+%       Problems," IEEE Transactions on Image Processing 18, 2419-2434 
+%       (2009).
+%
+% *************************************************************************
+% * Author : Yunhui Gao
+% * Date   : 2021/04/20
+% *************************************************************************
+%
+%   ===== Required inputs =================================================
+%
+%	- x     : 1D / 2D / 3D array
+%             The input array.
+%
+%   - gamma : float
+%             Parameter for the proximity operator.
+%
+%   - iter  : int
+%             Number of iterations for solving the denoising problem.
+%
+%   ===== Outputs =========================================================
+%
+%   - prox : 1D / 2D / 3D array
+%            The proximity operator for x with respect to the anisotropic
+%            TV norm.
+%
+% *************************************************************************
 
 t_prev = 1;
     

@@ -1,5 +1,4 @@
 function [x,n_iters,J_vals,runtimes] = FISTA(y,A,lambda,varargin)
-
 % *************************************************************************
 % * This function applies the fast iterative shrinkage / thresholding 
 %   algorithm (FISTA) to solve linear inverse problem of the form: 
@@ -203,7 +202,10 @@ if (sum(stop_criterion == [0 1 2 3]) == 0)
 end
 
 
-%% auxilary functions
+%% 
+% =========================================================================
+%                         auxilary functions
+% =========================================================================
 % calculate the data-fidelity term F(x)
 function val = F(x)
     val = 0.5*normArr(A(x)-y)^2;
@@ -234,7 +236,10 @@ function val = dF(x)
     val = AT(A(x)-y);
 end
 
-%% main loop
+%% 
+% =========================================================================
+%                               main loop
+% =========================================================================
 % initialization
 runtimes = NaN(max_iter,1);
 J_vals = NaN(max_iter,1);
