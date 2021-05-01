@@ -306,6 +306,11 @@ while loop
     
 end
 
+% display result
+if verbose
+    fprintf('Algorithm terminated.\n')
+end
+
 runtimes(isnan(runtimes)) = [];
 J_vals(isnan(J_vals)) = [];
 n_iters = iter - 1;
