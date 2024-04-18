@@ -8,13 +8,17 @@
 %   where x and y are two-dimensional arrays representing the estimate for
 %   the deblurred image and the observed blurry image, respectively. A(x)
 %   denotes the blurring linear operator, and lambda is the regularization
-%   coefficient.
+%   weight.
 % *************************************************************************
 % * Author : Yunhui Gao
 % * Date   : 2021/04/20
 % *************************************************************************
 
-%% generate data
+%% 
+% =========================================================================
+% Initialization
+% =========================================================================
+
 clear;clc;
 close all;
 
@@ -23,33 +27,40 @@ addpath(genpath('../src'))
 img = im2double(imread('../data/cameraman.tif'));
 
 % Gaussian kernel
-kernel = fspecial('gaussian',[9,9], 4);
-y = imfilter(img, kernel);
+kernel_size = 9;
+kernel_sigma = 4;
+kernel = fspecial('gaussian',[kernel_size,kernel_size], kernel_sigma);
 
-% Gaussian noise
-y = y + normrnd(0, 1e-3, size(y));
+% define function handles
+A  = @(x) imgcrop((imfilter(x,kernel)),kernel_size);    % forward linear operator A
+AT = @(x) (imfilter(zeropad(x,kernel_size),kernel));    % transpose (adjoint operator) of A
+
+% forward model
+x = zeropad(img,kernel_size);
+y = A(x);
+y = y + normrnd(0, 1e-3, size(y));  % add Gaussian noise
 
 % display the image
 figure
 subplot(1,2,1),imshow(img,[])
-title('Ground truth','interpreter','latex','fontsize',16)
+title('Ground truth','fontsize',16,'interpreter','latex')
 subplot(1,2,2),imshow(y,[])
-title('Observation','interpreter','latex','fontsize',16)
+title('Observation','fontsize',16,'interpreter','latex')
 set(gcf,'unit','normalized','position',[0.25,0.3,0.5,0.4])
 
-%% define function handles
-A = @(x) (imfilter(x,kernel));      % forward linear operator A
-AT = @(x) (imfilter(x,kernel));     % transpose of A (same as A)
+%% 
+% =========================================================================
+% Run the deblurring algorithm
+% =========================================================================
+
+rng(0)  % random seed, for reproducibility
 
 n_iters = 10;    % number of iterations to solve the denoising subproblem
 penalty = @(x) normTVi(x);   % isotropic TV norm as the penalty function
 prox_op = @(x,gamma) proxTVi(x,gamma,n_iters);       % proximity operator
 
-%% run the algorithm
-rng(0)  % random seed, for reproducibility
-
-x_init = randn(size(y));      % random initialization
-n_iters = 500;                % number of iterations
+x_init = rand(size(x));      % random initialization
+n_iters = 500;               % number of iterations
 lambda = 2e-5;
 [x,n_iters,J_vals,~] = TwIST(y,A,lambda,...   % try ISTA, TwIST, or FISTA
     'AT',           AT,...
@@ -62,13 +73,12 @@ lambda = 2e-5;
     'min_iter',     n_iters,...
     'verbose',      true);
 
-figure,imshow(x,[])
-title(['Reconstruction after ',num2str(n_iters),' iterations'])
-
+figure,imshow(imgcrop(x,kernel_size),[])
+title(['Reconstruction after ',num2str(n_iters),' iterations'],'interpreter','latex')
 
 %% 
 % =========================================================================
-%               comparison between different algorithms
+% Comparison of different algorithms
 % =========================================================================
 
 % parameters
@@ -103,6 +113,7 @@ lambda = 2e-5;
     'verbose',      true);
 
 %% display the results
+
 figure
 subplot(1,3,1),imshow(x_ista,[])
 title(['ISTA ($J(\mathbf{x}) = $',num2str(J_ista(201),'%4.3f'),')'],'interpreter','latex','fontsize',14)
@@ -126,3 +137,30 @@ ylabel('Objective function $J(\mathbf{x})$','interpreter','latex','fontsize',18)
 title('Convergence behavior','fontsize',18,'interpreter','latex')
 grid on
 set(gcf,'unit','normalized','position',[0.15,0.25,0.7,0.45])
+
+%% 
+% =========================================================================
+% Auxiliary functions
+% =========================================================================
+
+function u = imgcrop(x,cropsize)
+% =========================================================================
+% Crop the central part of the image.
+% -------------------------------------------------------------------------
+% Input:    - x        : Original image.
+%           - cropsize : Cropping pixel number along each dimension.
+% Output:   - u        : Cropped image.
+% =========================================================================
+u = x(cropsize+1:end-cropsize,cropsize+1:end-cropsize);
+end
+
+function u = zeropad(x,padsize)
+% =========================================================================
+% Zero-pad the image.
+% -------------------------------------------------------------------------
+% Input:    - x        : Original image.
+%           - padsize  : Padding pixel number along each dimension.
+% Output:   - u        : Zero-padded image.
+% =========================================================================
+u = padarray(x,[padsize,padsize],0);
+end
