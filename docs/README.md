@@ -78,7 +78,7 @@ Interestingly, with some algebra, one can verify that the minimizer $p_L(\mathbf
 
 $$
 \begin{align}
-p_L(\mathbf{y}) &= \mathop{\mathrm{argmin}}\limits_{\mathbf{x}} \left\{ R(\mathbf{x}) + \frac{L}{2} \left\| \mathbf{y} - \frac{1}{L} \nabla F(\mathbf{y}) \right\|_2^2 \right\} \\
+p_L(\mathbf{y}) &= \mathop{\mathrm{argmin}}\limits_{\mathbf{x}} \left\{ R(\mathbf{x}) + \frac{L}{2} \left\| \mathbf{x} - \mathbf{y} + \frac{1}{L} \nabla F(\mathbf{y}) \right\|_2^2 \right\} \\
 &= \mathrm{prox}_{L^{-1} R} \left( \mathbf{y} - \frac{1}{L} \nabla F(\mathbf{y}) \right). \tag{8}
 \end{align}
 $$
